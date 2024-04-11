@@ -18,7 +18,7 @@ const getAsset = async (token: string) => {
   return result;
 };
 
-export default async function handler(req, res) {
+export default async function handler(req: any, res: any) {
   try {
     if (req.method === "POST") {
       let webhook_data = req.body;
