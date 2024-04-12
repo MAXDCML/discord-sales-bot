@@ -10,6 +10,14 @@ const fetchPriceOfSolana = async () => {
   return priceData.solana.usd; // Adjust this depending on the API response structure
 };
 
+const fetchRarity = async (signature: string) => {
+  const rarityResponse = await fetch(`https://api.howrare.is/v0.1/rarity/${signature}`, {
+    method: 'GET',
+  });
+  const rarityData = await rarityResponse.json();
+  return rarityData
+};
+
 const getAsset = async (token: string) => {
   const response = await fetch(rpc, {
     method: 'POST',
@@ -36,7 +44,10 @@ export default async function handler(req: any, res: any) {
       const salePriceSOL = Number((webhook_data[0].events.nft.amount / 1000000000).toFixed(2));
       const salePriceUSD = (salePriceSOL * solPrice).toFixed(2);
       const formattedSalePriceUSD = Number(salePriceUSD).toLocaleString('en-US');
-      const TXLink = `https://solscan.io/tx/${webhook_data[0].events.nft.signature}`;
+      const signature = webhook_data[0].events.nft.signature
+      const rarityData = await fetchRarity(signature);
+      console.log("rarity data: ", rarityData)
+      const TXLink = `https://solscan.io/tx/${signature}`;
       const buyer = webhook_data[0].events.nft.buyer;
       const buyerLink = `https://solscan.io/account/${buyer}`;
       const seller = webhook_data[0].events.nft.seller.slice(0, 4) + '..' + webhook_data[0].events.nft.seller.slice(-4);
