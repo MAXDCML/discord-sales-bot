@@ -22,6 +22,7 @@ export default async function handler(req: any, res: any) {
   try {
     if (req.method === "POST") {
       let webhook_data = req.body;
+      console.log("events data",webhook_data[0].events)
       let token = await getAsset(webhook_data[0].events.nft.nfts[0].mint);
       const salePrice = (webhook_data[0].events.nft.amount / 1000000000).toFixed(2);
       const buyer = webhook_data[0].events.nft.buyer.slice(0, 4) + '..' + webhook_data[0].events.nft.buyer.slice(-4);
