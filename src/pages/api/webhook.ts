@@ -24,14 +24,12 @@ export default async function handler(req: any, res: any) {
       let webhook_data = req.body;
       let token = await getAsset(webhook_data[0].events.nft.nfts[0].mint);
       const salePrice = (webhook_data[0].events.nft.amount / 1000000000).toFixed(2);
-      const saleDate = `<t:${webhook_data[0].timestamp}:R>`;
       const buyer = webhook_data[0].events.nft.buyer.slice(0, 4) + '..' + webhook_data[0].events.nft.buyer.slice(-4);
       const seller = webhook_data[0].events.nft.seller.slice(0, 4) + '..' + webhook_data[0].events.nft.seller.slice(-4);
       const imageUrl = token.content.files[0].uri;
       const messageText = `*${token.content.metadata.name} has sold!*\n` +
                           `[Image](${imageUrl})\n` +
                           `*Sale Price:* ${salePrice} SOL\n` +
-                          `*Sale Date:* ${saleDate}\n` +
                           `*Buyer:* ${buyer}\n` +
                           `*Seller:* ${seller}`;
 
