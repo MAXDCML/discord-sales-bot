@@ -1,5 +1,5 @@
-const rpc = `https://mainnet.helius-rpc.com/?api-key=903286fa-a8c4-4416-bda9-899f9fdb59be`;
-const telegramApi = `https://api.telegram.org/bot6940358190:AAFlUxSFF2ygb1Cv4V7v_OEQhlNRlKvXpcE/sendMessage`;
+const rpc = `https://rpc.helius.xyz/?api-key=${process.env.HELIUS_KEY}`;
+const telegramApi = `https://api.telegram.org/bot${process.env.TELEGRAM_BOT_TOKEN}/sendMessage`;
 
 const getAsset = async (token: string) => {
   const response = await fetch(rpc, {
@@ -22,7 +22,6 @@ export default async function handler(req: any, res: any) {
   try {
     if (req.method === "POST") {
       let webhook_data = req.body;
-      console.log("request", req.body)
       let token = await getAsset(webhook_data[0].events.nft.nfts[0].mint);
       const salePrice = (webhook_data[0].events.nft.amount / 1000000000).toFixed(2);
       const saleDate = `<t:${webhook_data[0].timestamp}:R>`;
@@ -36,12 +35,14 @@ export default async function handler(req: any, res: any) {
                           `*Buyer:* ${buyer}\n` +
                           `*Seller:* ${seller}`;
 
+      console.log("this ran")
       const response = await fetch(telegramApi, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
+          chat_id: process.env.TELEGRAM_CHAT_ID,
           text: messageText,
           parse_mode: "Markdown",
         }),
