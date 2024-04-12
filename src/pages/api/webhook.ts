@@ -1,5 +1,5 @@
-const rpc = `https://rpc.helius.xyz/?api-key=${process.env.HELIUS_KEY}`;
-const telegramApi = `https://api.telegram.org/bot${process.env.TELEGRAM_BOT_TOKEN}/sendMessage`;
+const rpc = `https://mainnet.helius-rpc.com/?api-key=903286fa-a8c4-4416-bda9-899f9fdb59be`;
+const telegramApi = `https://api.telegram.org/bot6940358190:AAFlUxSFF2ygb1Cv4V7v_OEQhlNRlKvXpcE/sendMessage`;
 
 const getAsset = async (token: string) => {
   const response = await fetch(rpc, {
