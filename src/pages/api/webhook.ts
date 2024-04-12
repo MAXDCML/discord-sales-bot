@@ -36,19 +36,20 @@ export default async function handler(req: any, res: any) {
       const salePriceSOL = Number((webhook_data[0].events.nft.amount / 1000000000).toFixed(2));
       const salePriceUSD = (salePriceSOL * solPrice).toFixed(2);
       const formattedSalePriceUSD = Number(salePriceUSD).toLocaleString('en-US');
-      const buyer = webhook_data[0].events.nft.buyer.slice(0, 4) + '..' + webhook_data[0].events.nft.buyer.slice(-4);
+      const buyer = webhook_data[0].events.nft.buyer;
+      const buyerLink = `https://solscan.io/account/${buyer}`;
       const seller = webhook_data[0].events.nft.seller.slice(0, 4) + '..' + webhook_data[0].events.nft.seller.slice(-4);
       const imageUrl = token.content.files[0].uri;
       let captionText
       if (webhook_data[0].events.nft.type == 'NFT_SALE') {
         captionText = `*${token.content.metadata.name} has been bought!*\n\n` +
                       `*Price:* ${salePriceSOL} SOL ($${formattedSalePriceUSD})\n` +
-                      `*Buyer:* ${buyer}\n` +
+                      `[*👤 Buyer*](${buyerLink})\n`;
                       `*Seller:* ${seller}`;
       } else {
         captionText = `*${token.content.metadata.name} was minted!*\n\n` +
                       `*Mint Price:* ${salePriceSOL} SOL ($${formattedSalePriceUSD})\n` +
-                      `*Minted by:* ${buyer}\n`;
+                      `[*👤 Minter*](${buyerLink})\n`;
       }
 
 
