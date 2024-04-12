@@ -31,12 +31,12 @@ export default async function handler(req: any, res: any) {
       const imageUrl = token.content.files[0].uri;
       let captionText
       if (webhook_data[0].events.nft.type == 'NFT_SALE') {
-        captionText = `*${token.content.metadata.name} has sold!*\n\n` +
+        captionText = `*${token.content.metadata.name} has been bought!*\n\n` +
                       `*Price:* ${salePrice} SOL\n` +
                       `*Buyer:* ${buyer}\n` +
                       `*Seller:* ${seller}`;
       } else {
-        captionText = `*${token.content.metadata.name} was Minted!*\n\n` +
+        captionText = `*${token.content.metadata.name} was minted!*\n\n` +
                       `*Mint Price:* ${salePrice} SOL\n` +
                       `*Minted by:* ${buyer}\n`;
       }
