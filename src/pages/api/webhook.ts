@@ -44,11 +44,11 @@ export default async function handler(req: any, res: any) {
       let captionText
       if (webhook_data[0].events.nft.type == 'NFT_SALE') {
         captionText = `*${token.content.metadata.name} has been bought!*\n\n` +
-                      `Price* ${salePriceSOL} SOL ($${formattedSalePriceUSD})*\n` +
+                      `💰 Price* ${salePriceSOL} SOL ($${formattedSalePriceUSD})*\n` +
                       `👤 [Buyer](${buyerLink}) | [TX](${TXLink})\n`;
       } else {
         captionText = `*${token.content.metadata.name} was minted!*\n\n` +
-                      `Mint Price:* ${salePriceSOL} SOL ($${formattedSalePriceUSD})*\n` +
+                      `💰 Mint Price:* ${salePriceSOL} SOL ($${formattedSalePriceUSD})*\n` +
                       `👤 [Minter](${buyerLink}) | [TX](${TXLink})\n`;
       }
 
