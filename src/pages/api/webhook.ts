@@ -22,7 +22,7 @@ export default async function handler(req: any, res: any) {
   try {
     if (req.method === "POST") {
       let webhook_data = req.body;
-
+      console.log("request", req.body)
       let token = await getAsset(webhook_data[0].events.nft.nfts[0].mint);
       const salePrice = (webhook_data[0].events.nft.amount / 1000000000).toFixed(2);
       const saleDate = `<t:${webhook_data[0].timestamp}:R>`;
@@ -42,7 +42,6 @@ export default async function handler(req: any, res: any) {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          chat_id: process.env.TELEGRAM_CHAT_ID,
           text: messageText,
           parse_mode: "Markdown",
         }),
