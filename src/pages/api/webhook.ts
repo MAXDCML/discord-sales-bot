@@ -1,5 +1,6 @@
 const rpc = `https://rpc.helius.xyz/?api-key=${process.env.HELIUS_KEY}`;
 const telegramApi = `https://api.telegram.org/bot${process.env.TELEGRAM_BOT_TOKEN}/sendPhoto`;
+const mintLink = `https://www.launchmynft.io/collections/pokeC7sNhovvk22G47pn1dVaYmYQKn3dysvtSJQniEy/6Rcn4mqKZAwoZhJtskr6`; // Replace with your actual link
 
 const fetchPriceOfSolana = async () => {
   const priceResponse = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=solana&vs_currencies=usd', {
@@ -30,7 +31,6 @@ export default async function handler(req: any, res: any) {
   try {
     if (req.method === "POST") {
       let webhook_data = req.body;
-      console.log("events data",req)
       let token = await getAsset(webhook_data[0].events.nft.nfts[0].mint);
       const solPrice = await fetchPriceOfSolana();
       const salePriceSOL = Number((webhook_data[0].events.nft.amount / 1000000000).toFixed(2));
@@ -53,7 +53,16 @@ export default async function handler(req: any, res: any) {
       }
 
 
-      console.log("this ran")
+      
+      const inlineKeyboard = {
+        inline_keyboard: [
+          [
+            { text: "Mint Now", url: mintLink }
+          ]
+        ]
+      };
+
+      console.log("this ran");
       const response = await fetch(telegramApi, {
         method: 'POST',
         headers: {
@@ -64,6 +73,7 @@ export default async function handler(req: any, res: any) {
           photo: imageUrl,
           caption: captionText,
           parse_mode: "Markdown",
+          reply_markup: inlineKeyboard,
         }),
       });
       
