@@ -1,5 +1,5 @@
 const rpc = `https://rpc.helius.xyz/?api-key=${process.env.HELIUS_KEY}`;
-const telegramApi = `https://api.telegram.org/bot${process.env.TELEGRAM_BOT_TOKEN}/sendMessage`;
+const telegramApi = `https://api.telegram.org/bot${process.env.TELEGRAM_BOT_TOKEN}/sendPhoto`;
 
 const getAsset = async (token: string) => {
   const response = await fetch(rpc, {
@@ -29,11 +29,18 @@ export default async function handler(req: any, res: any) {
       const buyer = webhook_data[0].events.nft.buyer.slice(0, 4) + '..' + webhook_data[0].events.nft.buyer.slice(-4);
       const seller = webhook_data[0].events.nft.seller.slice(0, 4) + '..' + webhook_data[0].events.nft.seller.slice(-4);
       const imageUrl = token.content.files[0].uri;
-      const messageText = `*${token.content.metadata.name} has sold!*\n` +
-                          `[Image](${imageUrl})\n` +
-                          `*Sale Price:* ${salePrice} SOL\n` +
-                          `*Buyer:* ${buyer}\n` +
-                          `*Seller:* ${seller}`;
+      let captionText
+      if (webhook_data[0].events.nft.type == 'NFT_SALE') {
+        captionText = `*${token.content.metadata.name} has sold!*\n\n` +
+                      `*Price:* ${salePrice} SOL\n` +
+                      `*Buyer:* ${buyer}\n` +
+                      `*Seller:* ${seller}`;
+      } else {
+        captionText = `*${token.content.metadata.name} was Minted!*\n\n` +
+                      `*Mint Price:* ${salePrice} SOL\n` +
+                      `*Minted by:* ${buyer}\n`;
+      }
+
 
       console.log("this ran")
       const response = await fetch(telegramApi, {
@@ -43,7 +50,8 @@ export default async function handler(req: any, res: any) {
         },
         body: JSON.stringify({
           chat_id: process.env.TELEGRAM_CHAT_ID,
-          text: messageText,
+          photo: imageUrl,
+          caption: captionText,
           parse_mode: "Markdown",
         }),
       });
