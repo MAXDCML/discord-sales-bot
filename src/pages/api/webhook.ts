@@ -1,6 +1,14 @@
 const rpc = `https://rpc.helius.xyz/?api-key=${process.env.HELIUS_KEY}`;
 const telegramApi = `https://api.telegram.org/bot${process.env.TELEGRAM_BOT_TOKEN}/sendPhoto`;
 
+const fetchPriceOfSolana = async () => {
+  const priceResponse = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=solana&vs_currencies=usd', {
+    method: 'GET',
+  });
+  const priceData = await priceResponse.json();
+  return priceData.solana.usd; // Adjust this depending on the API response structure
+};
+
 const getAsset = async (token: string) => {
   const response = await fetch(rpc, {
     method: 'POST',
@@ -22,22 +30,23 @@ export default async function handler(req: any, res: any) {
   try {
     if (req.method === "POST") {
       let webhook_data = req.body;
-      console.log("events data",webhook_data[0].events)
+      console.log("events data",webhook_data[0].events.nft)
       let token = await getAsset(webhook_data[0].events.nft.nfts[0].mint);
-      console.log("token", token)
-      const salePrice = (webhook_data[0].events.nft.amount / 1000000000).toFixed(2);
+      const solPrice = await fetchPriceOfSolana();
+      const salePriceSOL = Number((webhook_data[0].events.nft.amount / 1000000000).toFixed(2));
+      const salePriceUSD = (salePriceSOL * solPrice).toFixed(2);
       const buyer = webhook_data[0].events.nft.buyer.slice(0, 4) + '..' + webhook_data[0].events.nft.buyer.slice(-4);
       const seller = webhook_data[0].events.nft.seller.slice(0, 4) + '..' + webhook_data[0].events.nft.seller.slice(-4);
       const imageUrl = token.content.files[0].uri;
       let captionText
       if (webhook_data[0].events.nft.type == 'NFT_SALE') {
         captionText = `*${token.content.metadata.name} has been bought!*\n\n` +
-                      `*Price:* ${salePrice} SOL\n` +
+                      `*Mint Price:* ${salePriceSOL} SOL ($${salePriceUSD})\n` +
                       `*Buyer:* ${buyer}\n` +
                       `*Seller:* ${seller}`;
       } else {
         captionText = `*${token.content.metadata.name} was minted!*\n\n` +
-                      `*Mint Price:* ${salePrice} SOL\n` +
+                      `*Mint Price:* ${salePriceSOL} SOL\n` +
                       `*Minted by:* ${buyer}\n`;
       }
 
